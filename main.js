@@ -23,14 +23,18 @@
 
     //..............................获取 HTML 页面内容 ............................
     var btn = document.getElementById('btn');
+    var btn__1 = document.getElementById('btn-1');
+    var btn__2 = document.getElementById('btn-2');
     var article_list = document.getElementById('article-list');
 
 
     //..............................点击添加出发添加事件............................
     btn.addEventListener('click', oneFan);
-
+    btn__1.addEventListener('click', search_book);
+    btn__2.addEventListener('click', sort_book);
 
     //.................................渲染到页面上...............................
+    //....................................通用..................................
     function render() {
         article_list.innerHTML = '';
 
@@ -40,12 +44,29 @@
             mydiv.style.border = '1px solid #D3D3D3';
             mydiv.innerHTML = ` 
               <input type="button" id="btn_${item.id}" onclick="familk(this)" value="x">
-               <p style="text-align: center; font-weight: 700; font-size: 18px;">${item.title}</p>
-               <p style="text-align: center">${item.content}</p>
-               <p style="text-align: center">${"作者: " + item.author}</p>
+               <p style="text-align: center">${"书号: " + item.id }</p>
+               <p style="text-align: center">${"书名 :  " + item.title}</p>
+               <p style="text-align: center">${"作者 : " + item.content}</p>
+               <p style="text-align: center">${"价格 : " + item.author}</p>
               `;
             article_list.appendChild(mydiv);
         });
+    }
+
+    //.................................只应用于查找..............................
+    function render_search_book(item) {
+        var mydiv = document.createElement('div');
+        mydiv.style.marginTop = '10px';
+        mydiv.style.border = '1px solid #D3D3D3';
+        mydiv.innerHTML = ` 
+              <input type="button" id="btn_${item.id}" onclick="familk(this)" value="x">
+               <p style="text-align: center">${"书号: " + item.id }</p>
+               <p style="text-align: center">${"书名 :  " + item.title}</p>
+               <p style="text-align: center">${"作者 : " + item.content}</p>
+               <p style="text-align: center">${"价格 : " + item.author}</p>
+              `;
+        article_list.appendChild(mydiv);
+
     }
 
     //..................................增加....................................
@@ -58,6 +79,9 @@
     }
 
     function add(title, content, author) {
+        if (isNaN(author)) {
+            author = 'NaN';
+        }
         var new_article = {
             title: title,
             content: content,
@@ -118,24 +142,68 @@
         updata_article();
     }
 
+    // amend(1,'好运');
+    // function amend(id,title,content,author) {
+    //     var new_article_1={
+    //         title: title,
+    //         content: content,
+    //         author: author,
+    //         id:id,
+    //         discuss: [],
+    //     };
+    //     updata(id,new_article_1);
+    // }
+    // function updata(id,pack) {
+    //     var book_index=search_article_id(id);
+    //     var article=article_data[book_index];
+    //     article_data[book_index]=Object.assign({},article,pack);
+    //     updata_article();
+    //
+    // }
+
     //..................................查看....................................
     //reade('温');
+    function search_book() {
+        var keys = document.getElementById('search-book').value;
+        reade(keys);
+    }
+
     function reade(keyword) {
+        article_list.innerHTML = '';
         article_data.find(function (item) {
             if (item.title.indexOf(keyword) !== -1) {
-                console.log(item);
+                render_search_book(item);
             }
         })
     }
 
+    //..................................排序...................................
+    function sort_book() {
+        article_list.innerHTML = '';
+
+        article_data.sort(function (a, b) {
+            a.author = Number(a.author);
+            if (a.author > b.author) {
+                return 1;
+            }
+            if (a.author < b.author) {
+                return -1;
+            }
+
+
+        });
+        console.log(article_data);
+        render();
+    }
+
     //...................................评论..................................
     //discuss_content(1,'我很好');
-    function discuss_content(id, content) {
-        var discuss_index = search_article_id(id);
-        var arr = article_data[discuss_index].discuss;
-        arr.push({type: content});
-        updata_article();
-    }
+    // function discuss_content(id, content) {
+    //     var discuss_index = search_article_id(id);
+    //     var arr = article_data[discuss_index].discuss;
+    //     arr.push({type: content});
+    //     updata_article();
+    // }
 
     //..............................更新硬盘中数据函数............................
     function updata_article() {

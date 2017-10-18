@@ -1,4 +1,4 @@
-//在存储LocalStorage 的方法
+//存储在LocalStorage 中
 ;(function () {
     window.s = {};
     s.get = function (a) {
